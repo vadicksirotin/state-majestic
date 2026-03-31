@@ -1,7 +1,7 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Reorder, motion } from 'framer-motion';
-import { createRank, deleteRank, reorderRanks, setHighCommandRank } from '@/app/actions/factionSystemOps';
+import { createRank, deleteRank, updateRank, reorderRanks, setHighCommandRank } from '@/app/actions/factionSystemOps';
 
 // Тип ранга, который приходит из БД
 export interface FactionRank {
@@ -16,16 +16,43 @@ export function RankManager({ factionId, initialRanks, currentHighCommandWeight 
   const [items, setItems] = useState<FactionRank[]>([...initialRanks].sort((a,b) => b.weight - a.weight));
   const [newRankName, setNewRankName] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // Добавление ранга: он летит в самый низ списка (вес 1)
+  useEffect(() => {
+    setItems([...initialRanks].sort((a,b) => b.weight - a.weight));
+  }, [initialRanks]);
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRankName.trim()) return;
     setLoading(true);
-    await createRank(factionId, newRankName);
-    // Для UX сразу обновлять не будем - оставим серверу через revalidatePath
-    // Но очистим инпут
-    setNewRankName('');
+    try {
+      await createRank(factionId, newRankName);
+      setNewRankName('');
+    } catch (err: any) {
+      alert("Ошибка: " + err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleEdit = async (rankId: string, oldName: string) => {
+    const newName = prompt('Введите новое название ранга:', oldName);
+    if (!newName || newName.trim() === oldName) return;
+    setLoading(true);
+    try {
+      await updateRank(factionId, rankId, newName.trim());
+    } catch(err: any) {
+      alert("Ошибка: " + err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleDelete = async (rankId: string) => {
+    if (!confirm('Вы точно хотите удалить этот ранг?')) return;
+    setLoading(true);
+    try {
+      await deleteRank(factionId, rankId);
+    } catch(err: any) {
+      alert("Ошибка: " + err.message);
+    }
     setLoading(false);
   };
 
@@ -39,7 +66,11 @@ export function RankManager({ factionId, initialRanks, currentHighCommandWeight 
 
   const handleSetHighStaff = async (weight: number) => {
     setLoading(true);
-    await setHighCommandRank(factionId, weight);
+    try {
+      await setHighCommandRank(factionId, weight);
+    } catch (err: any) {
+      alert("Ошибка: " + err.message);
+    }
     setLoading(false);
   };
 
@@ -92,13 +123,22 @@ export function RankManager({ factionId, initialRanks, currentHighCommandWeight 
               <span style={{ color: 'var(--text-muted)' }}>☰</span>
               <strong>{rank.weight}. {rank.name}</strong>
             </div>
-            <button 
-              onClick={() => deleteRank(factionId, rank.id)} 
-              disabled={loading}
-              style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', opacity: 0.7 }}
-            >
-              ✕
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => handleEdit(rank.id, rank.name)} 
+                disabled={loading}
+                style={{ background: 'none', border: 'none', color: '#3B82F6', cursor: 'pointer', opacity: 0.8 }}
+              >
+                ✏️
+              </button>
+              <button 
+                onClick={() => handleDelete(rank.id)} 
+                disabled={loading}
+                style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', opacity: 0.8 }}
+              >
+                ✕
+              </button>
+            </div>
           </Reorder.Item>
         ))}
         {items.length === 0 && <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '1rem' }}>Ранги не настроены. Добавьте первый ранг!</div>}

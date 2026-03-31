@@ -57,6 +57,15 @@ export async function deleteRank(factionId: string, rankId: string) {
   revalidatePath(`/${factionId}`);
 }
 
+export async function updateRank(factionId: string, rankId: string, name: string) {
+  await checkLeaderAccess(factionId);
+  await prisma.factionRank.update({
+    where: { id: rankId },
+    data: { name }
+  });
+  revalidatePath(`/${factionId}`);
+}
+
 export async function reorderRanks(factionId: string, newOrderIds: string[]) {
   await checkLeaderAccess(factionId);
   // newOrderIds - это массив ID от самого младшего (вес 1) к самому старшему (макс вес)
