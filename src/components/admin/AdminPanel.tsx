@@ -165,19 +165,49 @@ export function AdminPanel() {
       {roleModal && selectedUser && (
         <div style={modalOverlay} onClick={() => setRoleModal(false)}>
           <div style={modalBox} onClick={e => e.stopPropagation()}>
-            <h3 style={{ fontFamily: 'var(--font-heading)', marginBottom: '1rem' }}>Назначить должность: {selectedUser.name}</h3>
-            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Выберите фракцию</label>
-            <select value={roleFaction} onChange={e => setRoleFaction(e.target.value)} style={{ ...selectStyle, marginBottom: '0.75rem' }}>
-              {FACTIONS.map(f => <option key={f} value={f}>{f.toUpperCase()}</option>)}
-            </select>
+            <h3 style={{ fontFamily: 'var(--font-heading)', marginBottom: '1rem' }}>Назначить полномочия: {selectedUser.name}</h3>
+
             <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Уровень полномочий</label>
-            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Лидеры, Кураторы и Админы автоматически добавляются в ростер.</p>
-            <select value={roleLevel} onChange={e => setRoleLevel(e.target.value)} style={{ ...selectStyle, marginBottom: '1.5rem' }}>
-              {ROLE_LEVELS.map(r => <option key={r} value={r}>{r}</option>)}
+            <select 
+              value={roleLevel} 
+              onChange={e => setRoleLevel(e.target.value)} 
+              style={{ ...selectStyle, marginBottom: '1rem' }}
+            >
+              {ROLE_LEVELS.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
             </select>
+
+            {/* Показываем выбор фракции только если роль не глобальная (не Админ и не Куратор) */}
+            {roleLevel !== 'admin' && roleLevel !== 'curator' && (
+              <div style={{ animation: 'fadeIn 0.2s ease-out' }}>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Выберите подконтрольную фракцию</label>
+                <select value={roleFaction} onChange={e => setRoleFaction(e.target.value)} style={{ ...selectStyle, marginBottom: '1.5rem' }}>
+                  {FACTIONS.map(f => <option key={f} value={f}>{f.toUpperCase()}</option>)}
+                </select>
+              </div>
+            )}
+
+            { (roleLevel === 'admin' || roleLevel === 'curator') && (
+              <p style={{ fontSize: '0.75rem', color: '#60A5FA', background: 'rgba(59,130,246,0.1)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid rgba(59,130,246,0.2)' }}>
+                ℹ️ Выбранная роль является <strong>Глобальной</strong> и дает доступ к управлению всеми разделами сайта без привязки к конкретной фракции.
+              </p>
+            )}
+
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button onClick={handleSetRole} className="btn btn-primary" disabled={isPending} style={{ flex: 1 }}>
-                {isPending ? '...' : 'Подтвердить назначение'}
+              <button 
+                onClick={() => {
+                  // Если роль глобальная, передаем спец-ид для фракции
+                  const finalFactionId = (roleLevel === 'admin' || roleLevel === 'curator') ? 'global' : roleFaction;
+                  startTransition(async () => {
+                    await adminSetUserRole(selectedUser.id, finalFactionId, roleLevel);
+                    setRoleModal(false);
+                    handleSearch(true);
+                  });
+                }} 
+                className="btn btn-primary" 
+                disabled={isPending} 
+                style={{ flex: 1 }}
+              >
+                {isPending ? '...' : 'Подтвердить полномочия'}
               </button>
               <button onClick={() => setRoleModal(false)} className="btn" style={{ opacity: 0.6 }}>Отмена</button>
             </div>

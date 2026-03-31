@@ -23,8 +23,9 @@ export async function adminSetUserRole(userId: string, factionId: string, roleLe
   });
 
   // Если даём leadership/curator/admin - автоматически добавляем в ростер с правами лидера
+  // Пропускаем, если роль Глобальная (factionId: 'global')
   const leadershipRoles = ['leadership', 'curator', 'admin'];
-  if (leadershipRoles.includes(roleLevel)) {
+  if (leadershipRoles.includes(roleLevel) && factionId !== 'global') {
     // 1. Убеждаемся что в БД есть ранг Лидер для этой фракции
     let leaderRank = await prisma.factionRank.findFirst({
       where: { factionId, weight: { gte: 15 } }
