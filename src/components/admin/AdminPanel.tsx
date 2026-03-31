@@ -146,7 +146,7 @@ export function AdminPanel() {
                       <div>
                         <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{role.factionId.toUpperCase()}</span>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                           Права: {role.roleLevel} {entry && ` | Звание: ${entry.rank} (${entry.rankWeight})`}
+                           Права: {role.roleLevel} {entry && ` | Звание: ${entry.rank}`}
                         </div>
                       </div>
                       <button onClick={() => handleRemoveRole(role.factionId)} disabled={isPending} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontSize: '0.9rem' }}>

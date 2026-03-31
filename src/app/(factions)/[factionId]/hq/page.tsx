@@ -153,7 +153,7 @@ export default async function HQPage({ params }: PageProps) {
                 <div>
                   <strong>{member.user.name}</strong>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {member.rank} (вес: {member.rankWeight})
+                    {member.rank}
                     {member.department && ` • ${member.department}`}
                     {member.rankWeight >= highCommandMin && (
                       <span style={{ marginLeft: 8, fontSize: '0.7rem', color: '#A78BFA', background: 'rgba(139,92,246,0.15)', padding: '1px 6px', borderRadius: '6px' }}>HC</span>

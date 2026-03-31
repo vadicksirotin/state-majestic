@@ -26,14 +26,16 @@ export async function adminSetUserRole(userId: string, factionId: string, roleLe
   // Пропускаем, если роль Глобальная (factionId: 'global')
   const leadershipRoles = ['leadership', 'curator', 'admin'];
   if (leadershipRoles.includes(roleLevel) && factionId !== 'global') {
-    // 1. Убеждаемся что в БД есть ранг Лидер для этой фракции
+    // 1. Убеждаемся что в БД есть хоть какой-то ранг для этой фракции
+    // Если рангов нет — создаем ранг "Лидер" с весом 100
     let leaderRank = await prisma.factionRank.findFirst({
-      where: { factionId, weight: { gte: 15 } }
+      where: { factionId },
+      orderBy: { weight: 'desc' }
     });
     
     if (!leaderRank) {
       leaderRank = await prisma.factionRank.create({
-        data: { factionId, name: 'Лидер', weight: 15 }
+        data: { factionId, name: 'Лидер', weight: 100 }
       });
     }
 
@@ -44,11 +46,11 @@ export async function adminSetUserRole(userId: string, factionId: string, roleLe
       create: { userId, factionId, rank: leaderRank.name, rankWeight: leaderRank.weight },
     });
 
-    // 3. Убеждаемся что есть настройки фракции с правильным порогом
+    // 3. Убеждаемся что есть настройки фракции
     await prisma.factionSettings.upsert({
       where: { factionId },
       update: { leaderRank: leaderRank.weight },
-      create: { factionId, leaderRank: leaderRank.weight, highCommandRank: 10 }
+      create: { factionId, leaderRank: leaderRank.weight, highCommandRank: Math.floor(leaderRank.weight * 0.7) }
     });
   }
 
