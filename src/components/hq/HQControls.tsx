@@ -172,10 +172,10 @@ export function ReviewPanel({ itemRequests, promotionReports }: { itemRequests: 
                   </div>
                   {req.status === 'pending' ? (
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      <form action={async () => { 'use server'; await reviewItemRequest(req.id, 'approved'); }}>
+                      <form action={async () => { await reviewItemRequest(req.id, 'approved'); }}>
                         <button type="submit" className="btn" style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981', padding: '0.3rem 0.8rem', fontSize: '0.8rem' }}>✅</button>
                       </form>
-                      <form action={async () => { 'use server'; await reviewItemRequest(req.id, 'rejected'); }}>
+                      <form action={async () => { await reviewItemRequest(req.id, 'rejected'); }}>
                         <button type="submit" className="btn" style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', padding: '0.3rem 0.8rem', fontSize: '0.8rem' }}>❌</button>
                       </form>
                     </div>
@@ -208,10 +208,10 @@ export function ReviewPanel({ itemRequests, promotionReports }: { itemRequests: 
                   </div>
                   {report.status === 'pending' ? (
                     <div style={{ display: 'flex', gap: '0.4rem', marginLeft: '1rem' }}>
-                      <form action={async () => { 'use server'; await reviewPromotionReport(report.id, 'approved'); }}>
+                      <form action={async () => { await reviewPromotionReport(report.id, 'approved'); }}>
                         <button type="submit" className="btn" style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981', padding: '0.3rem 0.8rem', fontSize: '0.8rem' }}>✅</button>
                       </form>
-                      <form action={async () => { 'use server'; await reviewPromotionReport(report.id, 'rejected'); }}>
+                      <form action={async () => { await reviewPromotionReport(report.id, 'rejected'); }}>
                         <button type="submit" className="btn" style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', padding: '0.3rem 0.8rem', fontSize: '0.8rem' }}>❌</button>
                       </form>
                     </div>
