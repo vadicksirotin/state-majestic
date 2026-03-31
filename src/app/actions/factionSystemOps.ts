@@ -20,20 +20,21 @@ async function checkLeaderAccess(factionId: string) {
 // ---------------------------------
 export async function createRank(factionId: string, name: string) {
   await checkLeaderAccess(factionId);
-  const existingRanks = await prisma.factionRank.findMany({ where: { factionId } });
   
-  // При создании ранга, все старые ранги получают +1, а этот становится рангом 1
-  for (const r of existingRanks) {
-    await prisma.factionRank.update({
-      where: { id: r.id },
-      data: { weight: r.weight + 1 }
-    });
-  }
+  // Сдвигаем все текущие ранги на 1 вверх ОДНИМ запросом (атомарно)
+  await prisma.factionRank.updateMany({
+    where: { factionId },
+    data: { weight: { increment: 1 } }
+  });
   
+  // Создаем новый самый младший ранг (1)
   await prisma.factionRank.create({
     data: { factionId, name, weight: 1 }
   });
-  revalidatePath(`/${factionId}`);
+
+  revalidatePath(`/${factionId}/hq`);
+  revalidatePath(`/${factionId}/ranks`);
+  return { success: true };
 }
 
 export async function deleteRank(factionId: string, rankId: string) {
@@ -43,18 +44,15 @@ export async function deleteRank(factionId: string, rankId: string) {
   
   await prisma.factionRank.delete({ where: { id: rankId } });
   
-  // Сдвигаем все ранги, которые были ВЫШЕ удаленного, на 1 шаг вниз (-1)
-  const higherRanks = await prisma.factionRank.findMany({
-    where: { factionId, weight: { gt: target.weight } }
+  // Сдвигаем все остальные ранги, которые были ВЫШЕ, вниз
+  await prisma.factionRank.updateMany({
+    where: { factionId, weight: { gt: target.weight } },
+    data: { weight: { decrement: 1 } }
   });
-  
-  for (const r of higherRanks) {
-    await prisma.factionRank.update({
-      where: { id: r.id },
-      data: { weight: r.weight - 1 }
-    });
-  }
-  revalidatePath(`/${factionId}`);
+
+  revalidatePath(`/${factionId}/hq`);
+  revalidatePath(`/${factionId}/ranks`);
+  return { success: true };
 }
 
 export async function updateRank(factionId: string, rankId: string, name: string) {

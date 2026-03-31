@@ -108,7 +108,12 @@ export default async function HQPage({ params }: PageProps) {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
           {pendingApps.map(app => {
-            const formData = JSON.parse(app.formData);
+            let formData: any = {};
+            try {
+              formData = JSON.parse(app.formData);
+            } catch (e) {
+              formData = { fullName: app.user.name, age: '?', experience: '?', reason: app.formData };
+            }
             return (
               <div key={app.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: 'var(--space-lg)', borderRadius: 'var(--radius-md)' }}>
                 <h3 style={{ fontSize: '1.1rem', marginBottom: 4 }}>Кандидат: {formData.fullName || app.user.name}</h3>

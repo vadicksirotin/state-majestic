@@ -3,7 +3,7 @@ import { useState, useTransition } from 'react';
 import { adminSearchUsers, adminSetUserRole, adminRemoveUserRole, adminSetRosterEntry, adminRemoveRosterEntry } from '@/app/actions/admin';
 
 const FACTIONS = ['government', 'lspd', 'ems', 'sheriff', 'fib', 'usss', 'sang'];
-const ROLE_LEVELS = ['guest', 'member', 'high-command', 'admin', 'leader', 'curator', 'chief-state', 'chief-portland'];
+const ROLE_LEVELS = ['guest', 'candidate', 'member', 'senior_staff', 'high_staff', 'leadership', 'admin'];
 
 export function AdminPanel() {
   const [query, setQuery] = useState('');
@@ -23,11 +23,16 @@ export function AdminPanel() {
   const [rosterWeight, setRosterWeight] = useState(1);
   const [rosterDept, setRosterDept] = useState('');
 
-  const handleSearch = () => {
+  const handleSearch = (preserveSelection = false) => {
     startTransition(async () => {
       const results = await adminSearchUsers(query);
       setUsers(results);
-      setSelectedUser(null);
+      if (!preserveSelection) {
+        setSelectedUser(null);
+      } else if (selectedUser) {
+        const updated = results.find((u: any) => u.id === selectedUser.id);
+        if (updated) setSelectedUser(updated);
+      }
     });
   };
 
@@ -36,15 +41,24 @@ export function AdminPanel() {
     startTransition(async () => {
       await adminSetUserRole(selectedUser.id, roleFaction, roleLevel);
       setRoleModal(false);
-      handleSearch(); // refresh
+      handleSearch(true); // refresh and preserve selection
     });
   };
 
   const handleRemoveRole = (factionId: string) => {
     if (!selectedUser) return;
+    // Оптимистичное обновление локального состояния
+    const updatedUser = {
+      ...selectedUser,
+      roles: selectedUser.roles.filter((r: any) => r.factionId !== factionId)
+    };
+    setSelectedUser(updatedUser);
+    setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+
     startTransition(async () => {
       await adminRemoveUserRole(selectedUser.id, factionId);
-      handleSearch();
+      // Мы уже обновили локально, но позовем поиск для синхронизации с БД (без сброса выделения)
+      handleSearch(true);
     });
   };
 
@@ -53,15 +67,23 @@ export function AdminPanel() {
     startTransition(async () => {
       await adminSetRosterEntry(selectedUser.id, rosterFaction, rosterRank, rosterWeight, rosterDept);
       setRosterModal(false);
-      handleSearch();
+      handleSearch(true);
     });
   };
 
   const handleRemoveRoster = (factionId: string) => {
     if (!selectedUser) return;
+    // Оптимистичное обновление
+    const updatedUser = {
+      ...selectedUser,
+      rosterEntries: selectedUser.rosterEntries.filter((r: any) => r.factionId !== factionId)
+    };
+    setSelectedUser(updatedUser);
+    setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+
     startTransition(async () => {
       await adminRemoveRosterEntry(selectedUser.id, factionId);
-      handleSearch();
+      handleSearch(true);
     });
   };
 
@@ -89,11 +111,11 @@ export function AdminPanel() {
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
         <input
           type="text" value={query} onChange={e => setQuery(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSearch()}
+          onKeyDown={e => e.key === 'Enter' && handleSearch(false)}
           placeholder="Имя пользователя или Discord ID..."
           style={{ ...inputStyle, flex: 1, fontSize: '1rem', padding: '0.8rem 1rem' }}
         />
-        <button onClick={handleSearch} className="btn btn-primary" disabled={isPending} style={{ padding: '0 2rem' }}>
+        <button onClick={() => handleSearch(false)} className="btn btn-primary" disabled={isPending} style={{ padding: '0 2rem' }}>
           {isPending ? '...' : 'Найти'}
         </button>
       </div>
