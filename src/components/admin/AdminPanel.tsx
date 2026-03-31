@@ -125,7 +125,7 @@ export function AdminPanel() {
               <div>
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', margin: 0 }}>{selectedUser.name}</h2>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>
-                  ID: {selectedUser.id}<br/>Discord: {selectedUser.discordId}
+                  ID: {selectedUser.id}<br />Discord: {selectedUser.discordId}
                 </p>
               </div>
               <div>
@@ -146,7 +146,7 @@ export function AdminPanel() {
                       <div>
                         <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{role.factionId.toUpperCase()}</span>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                           Права: {role.roleLevel} {entry && ` | Звание: ${entry.rank}`}
+                          Права: {role.roleLevel} {entry && ` | Звание: ${entry.rank}`}
                         </div>
                       </div>
                       <button onClick={() => handleRemoveRole(role.factionId)} disabled={isPending} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontSize: '0.9rem' }}>
@@ -168,9 +168,9 @@ export function AdminPanel() {
             <h3 style={{ fontFamily: 'var(--font-heading)', marginBottom: '1rem' }}>Назначить полномочия: {selectedUser.name}</h3>
 
             <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>Уровень полномочий</label>
-            <select 
-              value={roleLevel} 
-              onChange={e => setRoleLevel(e.target.value)} 
+            <select
+              value={roleLevel}
+              onChange={e => setRoleLevel(e.target.value)}
               style={{ ...selectStyle, marginBottom: '1rem' }}
             >
               {ROLE_LEVELS.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
@@ -186,14 +186,14 @@ export function AdminPanel() {
               </div>
             )}
 
-            { (roleLevel === 'admin' || roleLevel === 'curator') && (
+            {(roleLevel === 'admin' || roleLevel === 'curator') && (
               <p style={{ fontSize: '0.75rem', color: '#60A5FA', background: 'rgba(59,130,246,0.1)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid rgba(59,130,246,0.2)' }}>
                 ℹ️ Выбранная роль является <strong>Глобальной</strong> и дает доступ к управлению всеми разделами сайта без привязки к конкретной фракции.
               </p>
             )}
 
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button 
+              <button
                 onClick={() => {
                   // Если роль глобальная, передаем спец-ид для фракции
                   const finalFactionId = (roleLevel === 'admin' || roleLevel === 'curator') ? 'global' : roleFaction;
@@ -202,9 +202,9 @@ export function AdminPanel() {
                     setRoleModal(false);
                     handleSearch(true);
                   });
-                }} 
-                className="btn btn-primary" 
-                disabled={isPending} 
+                }}
+                className="btn btn-primary"
+                disabled={isPending}
                 style={{ flex: 1 }}
               >
                 {isPending ? '...' : 'Подтвердить полномочия'}

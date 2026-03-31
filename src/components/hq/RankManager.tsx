@@ -102,7 +102,7 @@ export function RankManager({ factionId, initialRanks, currentHighCommandWeight 
           style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '8px' }}
         >
           {items.map(r => (
-            <option key={r.id} value={r.weight}>{r.name}</option>
+            <option key={r.id} value={r.weight}>{r.weight}. {r.name}</option>
           ))}
         </select>
       </div>
@@ -121,6 +121,7 @@ export function RankManager({ factionId, initialRanks, currentHighCommandWeight 
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: 'var(--text-muted)' }}>☰</span>
+              <strong style={{ color: '#F59E0B', fontFamily: 'var(--font-code)', fontSize: '1.1rem', minWidth: '1.5rem' }}>{rank.weight}.</strong>
               <strong>{rank.name}</strong>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
