@@ -4,6 +4,7 @@ import { updateFactionSettings, createDepartment, deleteDepartment } from '@/app
 
 import { RankManager } from './RankManager';
 import { LinkManager } from './LinkManager';
+import { FactionPagesManager } from './FactionPagesManager';
 
 interface LeaderSettingsProps {
   factionId: string;
@@ -12,10 +13,11 @@ interface LeaderSettingsProps {
   activityLogs: { id: string; action: string; details: string; createdAt: Date }[];
   ranks: any[];
   links: any[];
+  docs: any[];
 }
 
-export function LeaderSettings({ factionId, settings, departments, activityLogs, ranks, links }: LeaderSettingsProps) {
-  const [activeSection, setActiveSection] = useState<'charter' | 'departments' | 'ranks' | 'logs'>('ranks');
+export function LeaderSettings({ factionId, settings, departments, activityLogs, ranks, links, docs }: LeaderSettingsProps) {
+  const [activeSection, setActiveSection] = useState<'charter' | 'departments' | 'ranks' | 'logs' | 'pages'>('ranks');
   const [loading, setLoading] = useState(false);
   const [charterText, setCharterText] = useState(settings?.charterText || '');
 
@@ -64,6 +66,7 @@ export function LeaderSettings({ factionId, settings, departments, activityLogs,
     <div>
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <button style={sectionBtnStyle(activeSection === 'ranks')} onClick={() => setActiveSection('ranks')}>📊 Ранги и Ссылки</button>
+        <button style={sectionBtnStyle(activeSection === 'pages')} onClick={() => setActiveSection('pages')}>📄 Страницы (Статьи)</button>
         <button style={sectionBtnStyle(activeSection === 'charter')} onClick={() => setActiveSection('charter')}>📜 Устав</button>
         <button style={sectionBtnStyle(activeSection === 'departments')} onClick={() => setActiveSection('departments')}>🏢 Отделы</button>
         <button style={sectionBtnStyle(activeSection === 'logs')} onClick={() => setActiveSection('logs')}>📋 Логи</button>
@@ -73,6 +76,12 @@ export function LeaderSettings({ factionId, settings, departments, activityLogs,
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '800px' }}>
           <RankManager factionId={factionId} initialRanks={ranks} currentHighCommandWeight={settings?.highCommandRank ?? 10} />
           <LinkManager factionId={factionId} links={links} ranks={ranks} />
+        </div>
+      )}
+
+      {activeSection === 'pages' && (
+        <div style={{ maxWidth: '800px' }}>
+          <FactionPagesManager factionId={factionId} existingDocs={docs} />
         </div>
       )}
 

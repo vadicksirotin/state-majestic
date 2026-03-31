@@ -95,6 +95,10 @@ export default async function HQPage({ params }: PageProps) {
     orderBy: { order: 'asc' }
   });
 
+  const docs = await prisma.factionDocument.findMany({
+    where: { factionId }
+  });
+
   // --- APPLICATIONS TAB ---
   const applicationsComponent = (
     <div>
@@ -179,7 +183,7 @@ export default async function HQPage({ params }: PageProps) {
           rosterComponent={rosterComponent}
           reviewsComponent={<ReviewPanel itemRequests={itemRequests} promotionReports={promotionReports} />}
           newsComponent={<NewsPublisher factionId={factionId} />}
-          leaderComponent={<LeaderSettings factionId={factionId} settings={factionSettings} departments={departments} activityLogs={activityLogs} ranks={ranks} links={links} />}
+          leaderComponent={<LeaderSettings factionId={factionId} settings={factionSettings} departments={departments} activityLogs={activityLogs} ranks={ranks} links={links} docs={docs as any} />}
           isLeader={!!isLeader}
         />
       </div>

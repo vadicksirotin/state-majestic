@@ -32,6 +32,7 @@ model Application {
   id        String   @id @default(uuid())
   userId    String
   factionId String   
+  type      String   @default("academy") // "academy" | "transfer" | "recovery"
   status    String   @default("pending")
   formData  String   
   createdAt DateTime @default(now())
@@ -139,4 +140,37 @@ model ActivityLog {
   details   String   // JSON string or plain text description
   actorId   String   // User who did it
   createdAt DateTime @default(now())
+}
+
+model FactionOrder {
+  id        String   @id @default(uuid())
+  factionId String
+  title     String
+  content   String
+  authorId  String   // User ID
+  createdAt DateTime @default(now())
+}
+
+model PassRequest {
+  id        String   @id @default(uuid())
+  factionId String
+  discordId String
+  name      String
+  purpose   String
+  duration  String
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+}
+
+model FactionDocument {
+  id        String   @id @default(uuid())
+  factionId String
+  slug      String   // URL-путь (например: "patrol", "cabinet", "classified")
+  title     String
+  content   String   // Markdown или HTML контент статьи
+  authorId  String   // User ID последнего редактора
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@unique([factionId, slug])
 }

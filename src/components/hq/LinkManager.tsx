@@ -11,10 +11,10 @@ export interface FactionLink {
   accessLevel: number;
 }
 
-export function LinkManager({ factionId, links, ranks }: { factionId: string, links: FactionLink[], ranks: Array<{id:string, name:string, weight:number}> }) {
+export function LinkManager({ factionId, links, ranks }: { factionId: string, links: FactionLink[], ranks: Array<{ id: string, name: string, weight: number }> }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   // Ф-я для нового линка
   const [label, setLabel] = useState('');
   const [href, setHref] = useState('');
@@ -28,7 +28,7 @@ export function LinkManager({ factionId, links, ranks }: { factionId: string, li
     { label: '📋 Устав', href: `/${factionId}/drill` },
     { label: '🔄 Переводы', href: `/${factionId}/transfers` },
     { label: '♻️ Восстановление', href: `/${factionId}/recovery` },
-    { label: '🪪 Пропуска', href: `/${factionId}/passes` },
+    { label: '📄 Пропуска', href: `/${factionId}/passes` },
     { label: '📄 Документы', href: `/${factionId}/docs` },
     { label: '⭐ Руководство', href: `/${factionId}/high-staff` }
   ];
@@ -69,7 +69,7 @@ export function LinkManager({ factionId, links, ranks }: { factionId: string, li
         {links.map(link => (
           <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.85rem' }}>
             <span>{link.icon} {link.label}</span>
-            <button 
+            <button
               onClick={async () => await deleteLink(factionId, link.id)}
               disabled={loading}
               style={{ background: 'none', border: 'none', color: '#EF4444', opacity: 0.6, cursor: 'pointer', outline: 'none' }}
@@ -87,7 +87,7 @@ export function LinkManager({ factionId, links, ranks }: { factionId: string, li
           <div style={{ background: '#0d1117', border: '1px solid rgba(255,255,255,0.1)', padding: '2rem', borderRadius: '16px', width: '90%', maxWidth: '400px' }} onClick={e => e.stopPropagation()}>
             <h3 style={{ marginBottom: '1.5rem' }}>Создать ссылку</h3>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              
+
               <div style={{ display: 'flex', gap: '1rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', padding: '4px' }}>
                 <button type="button" onClick={() => setIsInternal(false)} style={{ flex: 1, padding: '0.5rem', background: !isInternal ? 'var(--accent)' : 'transparent', color: !isInternal ? 'black' : 'white', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Внешняя</button>
                 <button type="button" onClick={() => setIsInternal(true)} style={{ flex: 1, padding: '0.5rem', background: isInternal ? 'var(--accent)' : 'transparent', color: isInternal ? 'black' : 'white', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Внутренняя</button>
@@ -125,7 +125,7 @@ export function LinkManager({ factionId, links, ranks }: { factionId: string, li
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Кому доступна кнопка?</label>
                 <select value={minRank} onChange={e => setMinRank(Number(e.target.value))} style={{ width: '100%', padding: '0.6rem', background: 'rgba(0,0,0,0.4)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', marginTop: '4px' }}>
                   <option value={1}>Всем сотрудникам (с 1 ранга)</option>
-                  {[...ranks].sort((a,b)=>a.weight-b.weight).map(r => (
+                  {[...ranks].sort((a, b) => a.weight - b.weight).map(r => (
                     <option key={r.id} value={r.weight}>Начиная с: {r.weight}. {r.name}</option>
                   ))}
                 </select>

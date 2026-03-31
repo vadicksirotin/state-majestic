@@ -186,7 +186,7 @@ export const FACTIONS: Record<FactionId, FactionConfig> = {
       { label: 'Устав', href: '/sang/drill', icon: '📋', access: 'member' },
       { label: 'Переводы', href: '/sang/transfers', icon: '🔄', access: 'member' },
       { label: 'Восстановление', href: '/sang/recovery', icon: '♻️', access: 'candidate' },
-      { label: 'Пропуска', href: '/sang/passes', icon: '🪪', access: 'member' },
+      { label: 'Пропуска', href: '/sang/passes', icon: '📄', access: 'member' },
       { label: 'Состав', href: '/sang/roster', icon: '👥', access: 'member' },
       { label: 'Документы', href: '/sang/docs', icon: '📄', access: 'member' },
       { label: 'Руководство', href: '/sang/high-staff', icon: '⭐', access: 'high_staff' },
