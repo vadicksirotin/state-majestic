@@ -1,0 +1,119 @@
+.footer {
+  position: relative;
+  border-top: 1px solid var(--glass-border);
+  background: var(--bg-secondary);
+  padding: var(--space-4xl) 0 var(--space-xl);
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.06), transparent 70%);
+  pointer-events: none;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-2xl);
+  margin-bottom: var(--space-3xl);
+}
+
+.brand { max-width: 320px; }
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: #0B0F1A;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+.logoText {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.brandDesc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.colTitle {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.link {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+  text-decoration: none;
+}
+
+.link:hover { color: var(--text-primary); }
+
+.bottom {
+  border-top: 1px solid var(--glass-border);
+  padding-top: var(--space-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.copy {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.disclaimer {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+  .brand { grid-column: 1 / -1; }
+  .bottom { flex-direction: column; text-align: center; }
+}
