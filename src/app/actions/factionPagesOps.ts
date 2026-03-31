@@ -40,3 +40,31 @@ export async function submitPassRequest(factionId: string, purpose: string, dura
   revalidatePath(`/${factionId}/passes`);
   return { success: true };
 }
+
+export async function saveFactionDocument(factionId: string, slug: string, title: string, content: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) throw new Error('Unauthorized');
+  
+  await prisma.factionDocument.upsert({
+    where: { factionId_slug: { factionId, slug } },
+    update: { title, content, authorId: session.user.id },
+    create: { factionId, slug, title, content, authorId: session.user.id }
+  });
+
+  revalidatePath(`/${factionId}/${slug}`);
+  revalidatePath(`/${factionId}/hq`);
+  return { success: true };
+}
+
+export async function deleteFactionDocument(factionId: string, slug: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) throw new Error('Unauthorized');
+
+  await prisma.factionDocument.delete({
+    where: { factionId_slug: { factionId, slug } }
+  });
+
+  revalidatePath(`/${factionId}/${slug}`);
+  revalidatePath(`/${factionId}/hq`);
+  return { success: true };
+}
