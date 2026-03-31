@@ -22,7 +22,37 @@ export async function adminSetUserRole(userId: string, factionId: string, roleLe
     create: { userId, factionId, roleLevel },
   });
 
+  // Если даём leadership/curator/admin - автоматически добавляем в ростер с правами лидера
+  const leadershipRoles = ['leadership', 'curator', 'admin'];
+  if (leadershipRoles.includes(roleLevel)) {
+    // 1. Убеждаемся что в БД есть ранг Лидер для этой фракции
+    let leaderRank = await prisma.factionRank.findFirst({
+      where: { factionId, weight: { gte: 15 } }
+    });
+    
+    if (!leaderRank) {
+      leaderRank = await prisma.factionRank.create({
+        data: { factionId, name: 'Лидер', weight: 15 }
+      });
+    }
+
+    // 2. Добавляем в ростер
+    await prisma.rosterEntry.upsert({
+      where: { userId_factionId: { userId, factionId } },
+      update: { rank: leaderRank.name, rankWeight: leaderRank.weight },
+      create: { userId, factionId, rank: leaderRank.name, rankWeight: leaderRank.weight },
+    });
+
+    // 3. Убеждаемся что есть настройки фракции с правильным порогом
+    await prisma.factionSettings.upsert({
+      where: { factionId },
+      update: { leaderRank: leaderRank.weight },
+      create: { factionId, leaderRank: leaderRank.weight, highCommandRank: 10 }
+    });
+  }
+
   revalidatePath('/admin');
+  revalidatePath(`/${factionId}/hq`);
   return { success: true };
 }
 
@@ -33,7 +63,13 @@ export async function adminRemoveUserRole(userId: string, factionId: string) {
     where: { userId, factionId },
   });
 
+  // При удалении роли — удаляем и из ростера (так как теперь это единая сущность "Должность")
+  await prisma.rosterEntry.deleteMany({
+    where: { userId, factionId }
+  });
+
   revalidatePath('/admin');
+  revalidatePath(`/${factionId}/hq`);
   return { success: true };
 }
 
