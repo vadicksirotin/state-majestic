@@ -1,5 +1,5 @@
-'use client';
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import { type FactionConfig, getStatusLabel, getStatusColor } from '@/config/factions';
 import styles from './FactionLanding.module.css';
 
@@ -9,7 +9,12 @@ interface Props {
   stats?: { label: string; value: string }[];
 }
 
-export function FactionLanding({ faction, features = [], stats = [] }: Props) {
+export async function FactionLanding({ faction, features = [], stats = [] }: Props) {
+  const dbLinks = await prisma.factionLink.findMany({
+    where: { factionId: faction.id },
+    orderBy: { order: 'asc' }
+  });
+
   return (
     <div className={styles.landing}>
       <div className={styles.hero}>
@@ -62,6 +67,13 @@ export function FactionLanding({ faction, features = [], stats = [] }: Props) {
               <span>{n.icon}</span>
               <span>{n.label}</span>
               <span className={styles.arrow}>→</span>
+            </Link>
+          ))}
+          {dbLinks.filter((l: any) => l.accessLevel === 1).map((l: any) => (
+            <Link key={l.id} href={l.href} target={l.isInternal ? '_self' : '_blank'} className={styles.quickLink}>
+              <span>{l.icon || '🔗'}</span>
+              <span>{l.label}</span>
+              <span className={styles.arrow}>{l.isInternal ? '→' : '↗'}</span>
             </Link>
           ))}
         </div>

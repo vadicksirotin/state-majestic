@@ -73,6 +73,24 @@ model FactionSettings {
   charterText      String? // Устав фракции
 }
 
+model FactionRank {
+  id        String @id @default(uuid())
+  factionId String
+  name      String
+  weight    Int    @default(1) // 1 - самый младший
+}
+
+model FactionLink {
+  id          String   @id @default(uuid())
+  factionId   String
+  label       String
+  href        String
+  icon        String?
+  isInternal  Boolean  @default(true) // Внутренняя (сайт) или внешняя (Discord/Docs) ссылка
+  accessLevel Int      @default(1)    // Привязанный минимальный вес ранга
+  order       Int      @default(0)
+}
+
 model Department {
   id          String   @id @default(uuid())
   factionId   String

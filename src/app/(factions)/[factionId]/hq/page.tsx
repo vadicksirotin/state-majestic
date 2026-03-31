@@ -85,6 +85,16 @@ export default async function HQPage({ params }: PageProps) {
     take: 50
   });
 
+  const ranks = await prisma.factionRank.findMany({
+    where: { factionId },
+    orderBy: { weight: 'asc' }
+  });
+
+  const links = await prisma.factionLink.findMany({
+    where: { factionId },
+    orderBy: { order: 'asc' }
+  });
+
   // --- APPLICATIONS TAB ---
   const applicationsComponent = (
     <div>
@@ -169,7 +179,7 @@ export default async function HQPage({ params }: PageProps) {
           rosterComponent={rosterComponent}
           reviewsComponent={<ReviewPanel itemRequests={itemRequests} promotionReports={promotionReports} />}
           newsComponent={<NewsPublisher factionId={factionId} />}
-          leaderComponent={<LeaderSettings factionId={factionId} settings={factionSettings} departments={departments} activityLogs={activityLogs} />}
+          leaderComponent={<LeaderSettings factionId={factionId} settings={factionSettings} departments={departments} activityLogs={activityLogs} ranks={ranks} links={links} />}
           isLeader={!!isLeader}
         />
       </div>

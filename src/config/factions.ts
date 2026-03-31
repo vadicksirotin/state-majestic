@@ -182,15 +182,12 @@ export const FACTIONS: Record<FactionId, FactionConfig> = {
     navItems: [
       { label: 'Обзор', href: '/sang', icon: '🏠', access: 'guest' },
       { label: 'Звания', href: '/sang/ranks', icon: '🎖️', access: 'guest' },
-      { label: 'Части', href: '/sang/units', icon: '🏗️', access: 'member' },
       { label: 'Приказы', href: '/sang/orders', icon: '📜', access: 'leadership' },
       { label: 'Устав', href: '/sang/drill', icon: '📋', access: 'member' },
       { label: 'Переводы', href: '/sang/transfers', icon: '🔄', access: 'member' },
       { label: 'Восстановление', href: '/sang/recovery', icon: '♻️', access: 'candidate' },
-      { label: 'База', href: '/sang/base', icon: '🏕️', access: 'member' },
-      { label: 'Боеготовность', href: '/sang/readiness', icon: '🎯', access: 'senior_staff' },
-      { label: 'Состав', href: '/sang/roster', icon: '👥', access: 'member' },
       { label: 'Пропуска', href: '/sang/passes', icon: '🪪', access: 'member' },
+      { label: 'Состав', href: '/sang/roster', icon: '👥', access: 'member' },
       { label: 'Документы', href: '/sang/docs', icon: '📄', access: 'member' },
       { label: 'Руководство', href: '/sang/high-staff', icon: '⭐', access: 'high_staff' },
     ]

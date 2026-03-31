@@ -97,7 +97,7 @@ html {
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--font-body), "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
